@@ -1,0 +1,106 @@
+from string import ascii_letters
+from collections import Counter
+from pprint import pprint
+import numpy as np
+
+
+
+
+def generation2(list):
+    result = {}
+    result2= {}
+    liste = decoupe(list)
+    for s in liste:
+        if result.has_key(s):
+            result[s] = result[s]+ 1
+        else:
+            result[s] = 1
+    for s in result:
+        result2[s] = result[s]/float(len(result))
+    return result2;
+
+def sum2(list):
+    tmp = 0
+    for y in list:
+        tmp = tmp + list[y]
+    return tmp
+
+
+def generation(list):
+    result ={}
+    final = {}
+    liste = decoupe(list)
+    for s in liste:
+        a = (s[0],s[1])                                                                               
+        c = s[2]
+        if result.has_key(a):
+            if result[a].has_key(s[2]):
+                 result[a][c] =  result[a][c] +1
+            else:
+                result[a][c] = 1  
+        else:
+            result[a]= {}
+            result[a][c] = 1
+    for y in result:
+        ma_value = sum2(result[y])
+        for ee in result[y]:
+            result[y][ee]= result[y][ee]/float(ma_value)
+    return result
+                      
+
+#def mot(a,b,c):
+    
+
+def decoupe(l):
+    result = []
+    taille = len(l)
+    for i in range(1,taille):
+        result.append((l[i-1],l[i]))     
+    return result
+def sample_from_discrete_distrib(distrib):
+    words, probas = list(zip(*distrib.items()))
+    return np.random.choice(words, p = probas)
+
+def getList():
+    result = []
+    buffer =""
+    corpus = (l for l in "".join(open("newsco.en")))
+    for l in corpus:
+            if l==" ":
+              if(len(buffer)>0):
+                  result.append(buffer)
+              buffer =""
+            elif l==".":
+              if(len(buffer)>0):
+                  result.append(buffer)
+              result.append(".")
+              buffer =""
+            else:
+              if l in ascii_letters and l!='' and l !="\n":
+                  buffer = buffer +l
+                  if(buffer=="END"):
+                      result.append(buffer)
+                      buffer = ""
+    return result
+    
+                
+def generationMots(list):
+    mon_dico = generation(list)
+    ma_liste = ["BEGIN","NOW"]
+    while(ma_liste[len(ma_liste)-1] != "END"):
+          taille = len(ma_liste)
+          cle = (ma_liste[taille-2],ma_liste[taille-1])
+          ma_hash = mon_dico[cle]
+          ma_liste.append( sample_from_discrete_distrib(ma_hash))
+    return ma_liste
+
+def decodes(liste):
+    buffer = ""
+    for i in range(2,len(liste)):
+	buffer = buffer + liste[i] + " "
+	if(i==2):
+	    buffer = buffer.title()
+    print buffer
+
+listeFinal =  getList()
+decodes(generationMots(listeFinal))
