@@ -163,7 +163,7 @@ for char, frequency in freq:
 
 
 def encode(mess,code):
-    #print([code[mess[s]] for s in range(len(mess))])
+    print([code[mess[s]] for s in range(len(mess))])
     return ''.join([code[mess[s]] for s in range(len(mess))])
 
 encode(string,code)
